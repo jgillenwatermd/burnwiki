@@ -11,7 +11,7 @@ export default function Header() {
     <header className="border-b border-gray-200 bg-white">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2 no-underline">
-          <span className="text-xl font-bold text-[#1a1a2e]">Burn Wiki</span>
+          <span className="text-xl font-bold text-[#1a1a2e]">Burn<span className="text-[#c0392b]">Wiki</span></span>
         </Link>
 
         {/* Desktop search + nav */}

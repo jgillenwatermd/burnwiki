@@ -9,11 +9,24 @@ const processor = unified()
   .use(remarkHtml, { sanitize: false });
 
 export async function renderMarkdown(markdown: string): Promise<string> {
-  const result = await processor.process(markdown);
-  let html = String(result);
+  // Split at ## References to apply different transforms above and below
+  const refSplit = markdown.split(/^(## References)/m);
+  let bodyMd: string;
+  let refsMd: string | null;
 
-  // Transform inline citations [1], [2,3], [1-4] into superscript links
-  html = html.replace(/\[(\d+(?:[,-]\d+)*)\]/g, (match, inner: string) => {
+  if (refSplit.length >= 3) {
+    bodyMd = refSplit[0];
+    refsMd = refSplit.slice(1).join("");
+  } else {
+    bodyMd = markdown;
+    refsMd = null;
+  }
+
+  // Render body markdown to HTML
+  let bodyHtml = String(await processor.process(bodyMd));
+
+  // Transform inline citations [1], [2,3], [1-4] into superscript links (body only)
+  bodyHtml = bodyHtml.replace(/\[(\d+(?:[,-]\d+)*)\]/g, (_match, inner: string) => {
     const parts = inner.split(",").flatMap((part: string) => {
       part = part.trim();
       if (part.includes("-")) {
@@ -35,25 +48,30 @@ export async function renderMarkdown(markdown: string): Promise<string> {
     return `<sup class="citation">[${links}]</sup>`;
   });
 
-  // Transform [VERIFY] tags into callout badges
-  html = html.replace(
+  // Transform [VERIFY] tags into callout badges (body only)
+  bodyHtml = bodyHtml.replace(
     /\[VERIFY\]/g,
     '<span class="verify-badge">VERIFY</span>'
   );
 
-  // Transform PMID references in the References section
-  html = html.replace(
-    /PMID:\s*(\d+)/g,
-    '<a href="https://pubmed.ncbi.nlm.nih.gov/$1/" target="_blank" rel="noopener noreferrer" class="pmid-link">PMID: $1</a>'
-  );
+  if (!refsMd) return bodyHtml;
 
-  // Add anchor IDs to reference list items: [1], [2], etc. at the start of a line
-  html = html.replace(
+  // Render references markdown to HTML
+  let refsHtml = String(await processor.process(refsMd));
+
+  // Add anchor IDs to reference list items: [1], [2], etc. at the start of a paragraph
+  refsHtml = refsHtml.replace(
     /<p>\[(\d+)\]\s/g,
     '<p id="ref-$1" class="reference-item"><span class="ref-number">[$1]</span> '
   );
 
-  return html;
+  // Transform PMID references into PubMed links (references only)
+  refsHtml = refsHtml.replace(
+    /PMID:\s*(\d+)/g,
+    '<a href="https://pubmed.ncbi.nlm.nih.gov/$1/" target="_blank" rel="noopener noreferrer" class="pmid-link">PMID: $1</a>'
+  );
+
+  return bodyHtml + refsHtml;
 }
 
 export function extractHeadings(
