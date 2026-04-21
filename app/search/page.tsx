@@ -5,7 +5,7 @@ import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { searchTopics } from "@/lib/search";
 import type { SearchResult } from "@/lib/types";
-import EvidenceBadge from "@/components/EvidenceBadge";
+import EvBadge from "@/components/EvBadge";
 import SearchBar from "@/components/SearchBar";
 
 function SearchResultsContent() {
@@ -26,48 +26,56 @@ function SearchResultsContent() {
   }, [query]);
 
   return (
-    <div className="mx-auto max-w-3xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-[#1a1a2e]">Search Results</h1>
-      <div className="mt-4">
+    <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+        Search
+      </div>
+      <h1 className="mt-2 font-serif text-3xl font-medium text-codex-ink">
+        Search results
+      </h1>
+      <div className="mt-5">
         <SearchBar />
       </div>
 
       {query && (
-        <p className="mt-4 text-sm text-gray-500">
+        <p className="mt-5 font-mono text-xs uppercase tracking-wider text-codex-muted">
           {loading
-            ? "Searching..."
+            ? "Searching\u2026"
             : `${results.length} result${results.length !== 1 ? "s" : ""} for "${query}"`}
         </p>
       )}
 
       {searchError && (
-        <p className="mt-4 text-sm text-red-600">
+        <p className="mt-4 font-mono text-xs text-codex-accent">
           Search is temporarily unavailable. Please try again later.
         </p>
       )}
 
-      <div className="mt-6 divide-y divide-gray-100">
-        {results.map((result) => (
-          <div key={result.canonical_id} className="py-4">
+      <div className="mt-6">
+        {results.map((result, i) => (
+          <div
+            key={result.canonical_id}
+            className={`py-4 ${i === 0 ? "" : "border-t border-codex-rule"}`}
+          >
             <div className="flex items-start gap-3">
               <div className="flex-1">
                 <Link
                   href={`/topics/${result.category}/${result.canonical_id}`}
-                  className="text-base font-medium text-[#0645ad] no-underline hover:underline"
+                  className="font-serif text-base font-medium text-codex-ink no-underline hover:text-codex-accent"
                 >
                   {result.title}
                 </Link>
-                <p className="mt-0.5 text-xs capitalize text-gray-400">
+                <p className="mt-0.5 font-mono text-[10px] uppercase tracking-wider text-codex-muted">
                   {result.category.replace(/-/g, " ")}
                 </p>
                 {result.summary && (
-                  <p className="mt-1 text-sm text-gray-500 line-clamp-2">
-                    {result.summary.slice(0, 200)}
+                  <p className="mt-1 line-clamp-2 font-serif text-sm leading-relaxed text-codex-ink2">
+                    {result.summary.slice(0, 220)}
                   </p>
                 )}
               </div>
               {result.evidence_level && (
-                <EvidenceBadge level={result.evidence_level} />
+                <EvBadge level={result.evidence_level} />
               )}
             </div>
           </div>
@@ -76,13 +84,13 @@ function SearchResultsContent() {
 
       {!loading && query && results.length === 0 && !searchError && (
         <div className="py-12 text-center">
-          <p className="text-gray-500">
+          <p className="font-serif text-codex-ink2">
             No topics found for &ldquo;{query}&rdquo;
           </p>
-          <p className="mt-2 text-sm text-gray-400">
-            The encyclopedia is growing. Try a different term or browse categories from the{" "}
-            <Link href="/" className="text-[#0645ad] hover:underline">
-              homepage
+          <p className="mt-2 font-mono text-xs uppercase tracking-wider text-codex-muted">
+            The encyclopedia is growing. Try a different term or{" "}
+            <Link href="/" className="text-codex-accent hover:underline">
+              browse the index
             </Link>
             .
           </p>
@@ -96,9 +104,13 @@ export default function SearchPage() {
   return (
     <Suspense
       fallback={
-        <div className="mx-auto max-w-3xl px-4 py-8">
-          <h1 className="text-2xl font-bold text-[#1a1a2e]">Search Results</h1>
-          <p className="mt-4 text-sm text-gray-500">Loading...</p>
+        <div className="mx-auto max-w-3xl px-6 py-10">
+          <h1 className="font-serif text-3xl font-medium text-codex-ink">
+            Search results
+          </h1>
+          <p className="mt-4 font-mono text-xs uppercase tracking-wider text-codex-muted">
+            {"Loading\u2026"}
+          </p>
         </div>
       }
     >

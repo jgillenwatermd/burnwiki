@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Source_Serif_4, Inter } from "next/font/google";
+import { Source_Serif_4, Inter, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/Header";
@@ -14,6 +14,12 @@ const sourceSerif = Source_Serif_4({
 
 const inter = Inter({
   variable: "--font-sans",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
 });
@@ -70,8 +76,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${sourceSerif.variable} ${inter.variable}`}>
-      <body className="flex min-h-screen flex-col bg-white font-sans text-gray-900 antialiased">
+    <html
+      lang="en"
+      className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
+    >
+      <body className="flex min-h-screen flex-col bg-codex-bg font-sans text-codex-ink antialiased">
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getTopic, getAllTopicSlugs, getRelatedTopics, getCategory } from "@/lib/content";
 import { renderMarkdown, extractHeadings } from "@/lib/markdown";
 import TableOfContents from "@/components/TableOfContents";
-import EvidenceBadge from "@/components/EvidenceBadge";
+import EvBadge from "@/components/EvBadge";
 import RelatedTopics from "@/components/RelatedTopics";
 import KeyPointsCallout from "@/components/KeyPointsCallout";
 import type { Metadata } from "next";
@@ -109,6 +109,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+function countRefs(markdown: string): number {
+  return extractPmids(markdown).length;
+}
+
+function estimateReadTime(markdown: string): number {
+  const words = markdown.split(/\s+/).length;
+  return Math.max(1, Math.round(words / 225));
+}
+
 export default async function TopicPage({ params }: Props) {
   const { category: categoryId, slug } = await params;
   const topic = await getTopic(slug);
@@ -118,13 +127,11 @@ export default async function TopicPage({ params }: Props) {
   const relatedTopics = await getRelatedTopics(topic.related_topics || []);
   const headings = extractHeadings(topic.body_markdown);
 
-  // Split body into main content and key points
   const keyPointsMatch = topic.body_markdown.match(
     /## Key Points\s*\n([\s\S]*?)(?=\n## |\n*$)/
   );
   const keyPointsMarkdown = keyPointsMatch ? keyPointsMatch[1] : null;
 
-  // Remove key points from the main body for separate rendering
   let mainMarkdown = topic.body_markdown;
   if (keyPointsMatch) {
     mainMarkdown = mainMarkdown.replace(
@@ -138,7 +145,6 @@ export default async function TopicPage({ params }: Props) {
     ? await renderMarkdown(keyPointsMarkdown)
     : null;
 
-  // Add heading IDs to rendered HTML
   const htmlWithIds = bodyHtml.replace(
     /<h([23])>(.*?)<\/h[23]>/g,
     (_match, level: string, text: string) => {
@@ -152,72 +158,69 @@ export default async function TopicPage({ params }: Props) {
   );
 
   const jsonLd = buildJsonLd(topic);
+  const refCount = countRefs(topic.body_markdown);
+  const readMin = estimateReadTime(topic.body_markdown);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8">
+    <div className="mx-auto max-w-6xl px-6 py-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Breadcrumb */}
-      <nav className="mb-4 text-sm text-gray-500">
-        <Link href="/" className="text-[#0645ad] hover:underline">
-          Home
+      <nav className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+        <Link href="/" className="hover:text-codex-ink">
+          Index
         </Link>
-        <span className="mx-2">/</span>
+        <span className="mx-2">›</span>
         <Link
           href={`/topics/${categoryId}`}
-          className="capitalize text-[#0645ad] hover:underline"
+          className="capitalize hover:text-codex-ink"
         >
           {category?.name || categoryId.replace(/-/g, " ")}
         </Link>
-        <span className="mx-2">/</span>
-        <span>{topic.title}</span>
+        <span className="mx-2">›</span>
+        <span className="text-codex-ink2">{topic.title}</span>
       </nav>
 
-      {/* Title + metadata */}
-      <h1 className="text-3xl font-bold text-[#1a1a2e]">{topic.title}</h1>
-      <div className="mt-3 flex flex-wrap items-center gap-3 text-sm">
-        {topic.evidence_level && (
-          <EvidenceBadge level={topic.evidence_level} />
-        )}
-        {topic.last_updated && (
-          <span className="text-gray-400">
-            Updated {topic.last_updated}
-          </span>
-        )}
-      </div>
+      {/* Three-column layout: left TOC · center article · right see-also */}
+      <div className="mt-6 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)_240px]">
+        {/* LEFT — TOC */}
+        <div className="order-2 lg:order-1">
+          <TableOfContents headings={headings} />
+        </div>
 
-      {/* Mobile TOC */}
-      <div className="mt-6 lg:hidden">
-        <TableOfContents headings={headings} />
-      </div>
+        {/* CENTER — article */}
+        <article className="order-1 min-w-0 lg:order-2">
+          <h1 className="font-serif text-4xl font-medium leading-[1.04] tracking-[-0.02em] text-codex-ink sm:text-[44px]">
+            {topic.title}
+          </h1>
+          <div className="mt-4 flex flex-wrap items-center gap-3 border-b border-codex-rule pb-4">
+            {topic.evidence_level && <EvBadge level={topic.evidence_level} />}
+            {topic.evidence_level && (
+              <EvBadge level={topic.evidence_level} mode="bar" />
+            )}
+            <span className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+              {refCount > 0 && `${refCount} ref${refCount === 1 ? "" : "s"} · `}
+              {readMin} min read
+              {topic.last_updated && ` · rev ${topic.last_updated}`}
+            </span>
+          </div>
 
-      {/* Content + sidebar grid */}
-      <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_220px]">
-        <div>
-          {/* Key points callout */}
           {keyPointsHtml && <KeyPointsCallout html={keyPointsHtml} />}
 
-          {/* Body */}
           <div
-            className="topic-content"
+            className="topic-content mt-6"
             dangerouslySetInnerHTML={{ __html: htmlWithIds }}
           />
-        </div>
+        </article>
 
-        {/* Desktop sidebar */}
-        <div className="hidden lg:block">
-          <div className="space-y-6">
-            <TableOfContents headings={headings} />
+        {/* RIGHT — see also */}
+        <aside className="order-3 lg:order-3">
+          <div className="lg:sticky lg:top-6">
             <RelatedTopics topics={relatedTopics} />
           </div>
-        </div>
-      </div>
-
-      {/* Mobile related topics */}
-      <div className="mt-8 lg:hidden">
-        <RelatedTopics topics={relatedTopics} />
+        </aside>
       </div>
     </div>
   );

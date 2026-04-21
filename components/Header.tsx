@@ -8,26 +8,28 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2 no-underline">
-          <span className="text-xl font-bold text-[#1a1a2e]">Burn<span className="text-[#c0392b]">Wiki</span></span>
+    <header className="border-b border-codex-rule bg-codex-bg">
+      <div className="mx-auto flex max-w-5xl items-center gap-5 px-4 py-3">
+        {/* Wordmark */}
+        <Link href="/" className="flex items-center gap-3 no-underline">
+          <span className="font-serif text-lg font-semibold tracking-tight text-codex-ink">
+            Burn<span className="text-codex-accent">·</span>Wiki
+          </span>
+          <span className="hidden font-mono text-[9px] uppercase tracking-[0.18em] text-codex-muted md:inline">
+            Vol. I · 2026
+          </span>
         </Link>
+
+        <div className="flex-1" />
 
         {/* Desktop search + nav */}
         <div className="hidden items-center gap-6 md:flex">
           <SearchBar compact />
-          <nav className="flex gap-4 text-sm">
-            <Link
-              href="/"
-              className="text-gray-600 hover:text-[#1a1a2e]"
-            >
-              Home
+          <nav className="flex gap-5 text-xs text-codex-ink2">
+            <Link href="/" className="pb-0.5 hover:text-codex-ink">
+              Index
             </Link>
-            <Link
-              href="/about"
-              className="text-gray-600 hover:text-[#1a1a2e]"
-            >
+            <Link href="/about" className="pb-0.5 hover:text-codex-ink">
               About
             </Link>
           </nav>
@@ -35,12 +37,12 @@ export default function Header() {
 
         {/* Mobile hamburger */}
         <button
-          className="md:hidden p-2"
+          className="p-2 md:hidden"
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label="Toggle menu"
         >
           <svg
-            className="h-6 w-6 text-gray-600"
+            className="h-6 w-6 text-codex-ink2"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -64,23 +66,22 @@ export default function Header() {
         </button>
       </div>
 
-      {/* Mobile menu */}
       {menuOpen && (
-        <div className="border-t border-gray-100 px-4 pb-4 md:hidden">
+        <div className="border-t border-codex-rule-light px-4 pb-4 md:hidden">
           <div className="py-3">
-            <SearchBar compact />
+            <SearchBar />
           </div>
-          <nav className="flex flex-col gap-2 text-sm">
+          <nav className="flex flex-col gap-2 text-sm text-codex-ink2">
             <Link
               href="/"
-              className="text-gray-600 hover:text-[#1a1a2e]"
+              className="hover:text-codex-ink"
               onClick={() => setMenuOpen(false)}
             >
-              Home
+              Index
             </Link>
             <Link
               href="/about"
-              className="text-gray-600 hover:text-[#1a1a2e]"
+              className="hover:text-codex-ink"
               onClick={() => setMenuOpen(false)}
             >
               About

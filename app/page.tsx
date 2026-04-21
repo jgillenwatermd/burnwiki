@@ -1,8 +1,17 @@
 import { getAllCategories } from "@/lib/content";
 import CategoryCard from "@/components/CategoryCard";
-import SearchBar from "@/components/SearchBar";
+import EvBadge from "@/components/EvBadge";
+import type { EvidenceLevel } from "@/lib/evidence";
 
 export const revalidate = 3600;
+
+const EVIDENCE_LEGEND: EvidenceLevel[] = [
+  "High",
+  "Moderate",
+  "Low–Moderate",
+  "Low",
+  "Expert Consensus",
+];
 
 export default async function HomePage() {
   const categories = await getAllCategories();
@@ -10,8 +19,6 @@ export default async function HomePage() {
     (sum, c) => sum + (c.topic_count || 0),
     0
   );
-  // Populated categories first so live content is visible above the fold;
-  // empty placeholders follow in their original sort_order.
   const sortedCategories = [...categories].sort((a, b) => {
     const aEmpty = (a.topic_count || 0) === 0 ? 1 : 0;
     const bEmpty = (b.topic_count || 0) === 0 ? 1 : 0;
@@ -20,26 +27,41 @@ export default async function HomePage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12">
+    <div className="mx-auto max-w-5xl px-6 py-12">
       {/* Hero */}
-      <div className="mb-12 text-center">
-        <h1 className="text-4xl font-bold text-[#1a1a2e]">Burn Wiki</h1>
-        <p className="mt-3 text-lg text-gray-600">
-          A clinical encyclopedia for anyone in burn care
-        </p>
-        <div className="mt-6">
-          <SearchBar />
+      <div className="mb-10">
+        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-codex-muted">
+          The first illustrated evidence-anchored burn-care reference
         </div>
-        <p className="mt-4 text-sm text-gray-400">
-          Currently {publishedCount} topic{publishedCount === 1 ? "" : "s"} live.
-          New topics published as they clear full evidence review.
+        <h1 className="mt-3 max-w-3xl font-serif text-5xl font-medium leading-[1.03] tracking-[-0.025em] text-codex-ink">
+          Evidence-anchored burn care,
+          <br />
+          <span className="italic text-codex-ink2">
+            written by the people doing it.
+          </span>
+        </h1>
+        <p className="mt-5 max-w-2xl font-serif text-lg leading-relaxed text-codex-ink2">
+          {publishedCount} topic{publishedCount === 1 ? "" : "s"} published.
+          New topics released as they clear full evidence review. Every claim
+          PMID-linked; every page physician-supervised.
         </p>
+
+        {/* Evidence legend — teaches the palette inline */}
+        <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-codex-rule pt-5 font-mono text-[10px] tracking-wider text-codex-muted">
+          <span className="uppercase">Evidence</span>
+          {EVIDENCE_LEGEND.map((L) => (
+            <span key={L} className="inline-flex items-center gap-1.5">
+              <EvBadge level={L} mode="dot" />
+              <span className="uppercase text-codex-ink3">{L}</span>
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Category grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {sortedCategories.map((category) => (
-          <CategoryCard key={category.id} category={category} />
+      {/* Category grid — editorial numbered */}
+      <div className="grid grid-cols-[1px] gap-px bg-codex-rule sm:grid-cols-2 lg:grid-cols-3">
+        {sortedCategories.map((category, i) => (
+          <CategoryCard key={category.id} category={category} index={i} />
         ))}
       </div>
     </div>

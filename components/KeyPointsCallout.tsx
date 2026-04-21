@@ -1,9 +1,11 @@
 export default function KeyPointsCallout({ html }: { html: string }) {
   return (
-    <div className="my-8 rounded-lg border-l-4 border-[#c0392b] bg-[#f8f9fa] p-5">
-      <h2 className="mb-3 text-lg font-semibold text-[#1a1a2e]">Key Points</h2>
+    <div className="my-8 border border-codex-rule bg-codex-paper p-5">
+      <div className="mb-3 font-mono text-[10px] uppercase tracking-wider text-codex-accent">
+        Key Points
+      </div>
       <div
-        className="topic-content text-sm leading-relaxed"
+        className="topic-content text-sm"
         dangerouslySetInnerHTML={{ __html: html }}
       />
     </div>

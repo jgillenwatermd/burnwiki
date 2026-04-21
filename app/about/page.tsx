@@ -7,10 +7,15 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="mx-auto max-w-3xl px-4 py-12">
-      <h1 className="text-3xl font-bold text-[#1a1a2e]">About Burn Wiki</h1>
+    <div className="mx-auto max-w-3xl px-6 py-12">
+      <div className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+        About
+      </div>
+      <h1 className="mt-2 font-serif text-4xl font-medium tracking-tight text-codex-ink">
+        About Burn Wiki
+      </h1>
 
-      <div className="topic-content mt-8 space-y-6">
+      <div className="topic-content mt-8">
         <p>
           Burn Wiki is a public, evidence-indexed clinical encyclopedia dedicated to
           burn care. It is the only open-access reference of its kind for the burn

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { searchTopics } from "@/lib/search";
 import type { SearchResult } from "@/lib/types";
-import EvidenceBadge from "./EvidenceBadge";
+import EvBadge from "./EvBadge";
 
 export default function SearchBar({ compact = false }: { compact?: boolean }) {
   const [query, setQuery] = useState("");
@@ -56,42 +56,47 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
   }
 
   return (
-    <div ref={ref} className={`relative ${compact ? "w-64" : "w-full max-w-xl mx-auto"}`}>
+    <div ref={ref} className={`relative ${compact ? "w-72" : "mx-auto w-full max-w-xl"}`}>
       <form onSubmit={handleSubmit}>
-        <div className="relative">
+        <div className="flex items-center gap-2 rounded-[3px] border border-codex-rule bg-codex-card px-3 py-1.5 focus-within:border-codex-ink">
+          <svg
+            className="h-3.5 w-3.5 shrink-0 text-codex-muted"
+            fill="none"
+            viewBox="0 0 16 16"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
+            <circle cx="7" cy="7" r="5" />
+            <path strokeLinecap="round" d="M11 11l3.5 3.5" />
+          </svg>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setIsOpen(true)}
-            placeholder="Search burn topics..."
-            className={`w-full rounded-lg border border-gray-300 bg-white px-4 pr-10 text-gray-900 placeholder-gray-400 focus:border-[#0645ad] focus:outline-none focus:ring-1 focus:ring-[#0645ad] ${
-              compact ? "py-1.5 text-sm" : "py-3 text-base"
+            placeholder={compact ? "Search topics, figures\u2026" : "Search topics, figures, or PMIDs\u2026"}
+            className={`min-w-0 flex-1 bg-transparent font-serif italic text-codex-ink placeholder:text-codex-muted focus:outline-none ${
+              compact ? "text-xs" : "text-base"
             }`}
           />
-          <button
-            type="submit"
-            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-            aria-label="Search"
-          >
-            <svg className={compact ? "h-4 w-4" : "h-5 w-5"} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </button>
+          <span className="hidden shrink-0 rounded-[2px] border border-codex-rule px-1.5 py-px font-mono text-[10px] text-codex-muted sm:inline">
+            {"\u2318K"}
+          </span>
         </div>
       </form>
 
-      {/* Dropdown results */}
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+        <div className="absolute left-0 right-0 top-full z-50 mt-1 max-h-96 overflow-y-auto border border-codex-rule bg-codex-card shadow-[0_18px_40px_-12px_rgba(40,25,15,0.25)]">
           {loading ? (
-            <div className="px-4 py-3 text-sm text-gray-500">Searching...</div>
+            <div className="px-4 py-3 font-mono text-xs text-codex-muted">
+              {"Searching\u2026"}
+            </div>
           ) : (
             <>
               {results.slice(0, 8).map((result) => (
                 <button
                   key={result.canonical_id}
-                  className="flex w-full flex-col gap-1 border-b border-gray-50 px-4 py-3 text-left hover:bg-[#f8f9fa]"
+                  className="flex w-full flex-col gap-1 border-b border-codex-rule-light px-4 py-3 text-left hover:bg-codex-paper"
                   onClick={() => {
                     setIsOpen(false);
                     setQuery("");
@@ -99,32 +104,32 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
                   }}
                 >
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-[#0645ad]">
+                    <span className="font-serif text-sm font-medium text-codex-ink">
                       {result.title}
                     </span>
                     {result.evidence_level && (
-                      <EvidenceBadge level={result.evidence_level} small />
+                      <EvBadge level={result.evidence_level} mode="dot" />
                     )}
                   </div>
-                  <span className="text-xs text-gray-500">
+                  <span className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
                     {result.category.replace(/-/g, " ")}
                   </span>
                   {result.summary && (
-                    <span className="line-clamp-1 text-xs text-gray-400">
-                      {result.summary.slice(0, 150)}
+                    <span className="line-clamp-1 font-serif text-xs text-codex-ink3">
+                      {result.summary.slice(0, 180)}
                     </span>
                   )}
                 </button>
               ))}
               {results.length > 8 && (
                 <button
-                  className="w-full px-4 py-2 text-center text-sm text-[#0645ad] hover:bg-[#f8f9fa]"
+                  className="w-full px-4 py-2 text-center font-mono text-xs uppercase tracking-wide text-codex-accent hover:bg-codex-paper"
                   onClick={() => {
                     setIsOpen(false);
                     router.push(`/search?q=${encodeURIComponent(query)}`);
                   }}
                 >
-                  See all {results.length} results
+                  {`See all ${results.length} results \u2192`}
                 </button>
               )}
             </>
