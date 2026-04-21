@@ -10,7 +10,7 @@ export default function Footer() {
               Burn Wiki
             </Link>
             <span className="ml-2">
-              A clinical encyclopedia for the burn surgery community
+              A clinical encyclopedia for anyone in burn care
             </span>
           </div>
           <div className="flex gap-4">
@@ -18,6 +18,13 @@ export default function Footer() {
               About
             </Link>
           </div>
+        </div>
+        <div className="mt-3 border-t border-gray-200 pt-3 text-center text-xs text-gray-500">
+          LLM-drafted, physician-supervised. Every claim PMID-linked.{" "}
+          <Link href="/about" className="underline hover:text-[#1a1a2e]">
+            How Burn Wiki is built
+          </Link>
+          .
         </div>
       </div>
     </footer>

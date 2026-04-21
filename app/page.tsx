@@ -13,7 +13,7 @@ export default async function HomePage() {
       <div className="mb-12 text-center">
         <h1 className="text-4xl font-bold text-[#1a1a2e]">Burn Wiki</h1>
         <p className="mt-3 text-lg text-gray-600">
-          A clinical encyclopedia for the burn surgery community
+          A clinical encyclopedia for anyone in burn care
         </p>
         <div className="mt-6">
           <SearchBar />

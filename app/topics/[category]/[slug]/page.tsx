@@ -98,14 +98,6 @@ export default async function TopicPage({ params }: Props) {
             Updated {topic.last_updated}
           </span>
         )}
-        {topic.target_roles?.map((role) => (
-          <span
-            key={role}
-            className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
-          >
-            {role}
-          </span>
-        ))}
       </div>
 
       {/* Mobile TOC */}

@@ -20,11 +20,11 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: {
-    default: "Burn Wiki — Clinical Encyclopedia for Burn Surgery",
+    default: "Burn Wiki — Clinical Encyclopedia for Burn Care",
     template: "%s | Burn Wiki",
   },
   description:
-    "A public, evidence-indexed clinical encyclopedia for the burn surgery community. Written by domain experts with every claim linked to PubMed.",
+    "A public, evidence-indexed clinical encyclopedia for anyone in burn care. Written by burn-care domain experts with every claim linked to PubMed.",
 };
 
 export default function RootLayout({
