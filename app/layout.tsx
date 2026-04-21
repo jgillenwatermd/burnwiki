@@ -18,13 +18,50 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL = "https://burnwiki.com";
+const SITE_DESCRIPTION =
+  "A public, evidence-indexed clinical encyclopedia for anyone in burn care. Written by burn-care domain experts with every claim linked to PubMed.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Burn Wiki — Clinical Encyclopedia for Burn Care",
     template: "%s | Burn Wiki",
   },
-  description:
-    "A public, evidence-indexed clinical encyclopedia for anyone in burn care. Written by burn-care domain experts with every claim linked to PubMed.",
+  description: SITE_DESCRIPTION,
+  applicationName: "Burn Wiki",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    siteName: "Burn Wiki",
+    title: "Burn Wiki — Clinical Encyclopedia for Burn Care",
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Burn Wiki — Clinical Encyclopedia for Burn Care",
+    description: SITE_DESCRIPTION,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  verification: {
+    google: process.env.GOOGLE_SITE_VERIFICATION || undefined,
+    other: process.env.BING_SITE_VERIFICATION
+      ? { "msvalidate.01": process.env.BING_SITE_VERIFICATION }
+      : undefined,
+  },
 };
 
 export default function RootLayout({

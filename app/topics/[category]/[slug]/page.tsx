@@ -7,8 +7,11 @@ import EvidenceBadge from "@/components/EvidenceBadge";
 import RelatedTopics from "@/components/RelatedTopics";
 import KeyPointsCallout from "@/components/KeyPointsCallout";
 import type { Metadata } from "next";
+import type { Topic } from "@/lib/types";
 
 export const revalidate = 3600;
+
+const SITE_URL = "https://burnwiki.com";
 
 export async function generateStaticParams() {
   const slugs = await getAllTopicSlugs();
@@ -17,13 +20,92 @@ export async function generateStaticParams() {
 
 type Props = { params: Promise<{ category: string; slug: string }> };
 
+function topicUrl(topic: Topic): string {
+  return `${SITE_URL}/topics/${topic.category}/${topic.canonical_id}`;
+}
+
+function topicDescription(topic: Topic): string {
+  return topic.summary || `${topic.title} — Burn Wiki clinical reference.`;
+}
+
+function extractPmids(markdown: string): string[] {
+  const seen = new Set<string>();
+  const re = /PMID:\s*(\d+)/g;
+  let match: RegExpExecArray | null;
+  while ((match = re.exec(markdown)) !== null) {
+    seen.add(match[1]);
+  }
+  return Array.from(seen);
+}
+
+function buildJsonLd(topic: Topic): Record<string, unknown> {
+  const url = topicUrl(topic);
+  const description = topicDescription(topic);
+  const pmids = extractPmids(topic.body_markdown);
+  return {
+    "@context": "https://schema.org",
+    "@type": "MedicalWebPage",
+    "@id": url,
+    url,
+    name: topic.title,
+    headline: topic.title,
+    description,
+    inLanguage: "en-US",
+    isAccessibleForFree: true,
+    datePublished: topic.created_at,
+    dateModified: topic.updated_at,
+    author: {
+      "@type": "Organization",
+      name: "Burn Wiki Editorial",
+      url: SITE_URL,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Burn Wiki",
+      url: SITE_URL,
+    },
+    isPartOf: {
+      "@type": "WebSite",
+      name: "Burn Wiki",
+      url: SITE_URL,
+    },
+    about: {
+      "@type": "MedicalCondition",
+      name: topic.title,
+    },
+    citation: pmids.map((pmid) => ({
+      "@type": "ScholarlyArticle",
+      identifier: `PMID:${pmid}`,
+      url: `https://pubmed.ncbi.nlm.nih.gov/${pmid}/`,
+    })),
+  };
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const topic = await getTopic(slug);
   if (!topic) return {};
+  const description = topicDescription(topic);
+  const url = topicUrl(topic);
   return {
     title: topic.title,
-    description: topic.summary || `${topic.title} — Burn Wiki clinical reference.`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "article",
+      title: topic.title,
+      description,
+      url,
+      siteName: "Burn Wiki",
+      locale: "en_US",
+      publishedTime: topic.created_at,
+      modifiedTime: topic.updated_at,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: topic.title,
+      description,
+    },
   };
 }
 
@@ -69,8 +151,14 @@ export default async function TopicPage({ params }: Props) {
     }
   );
 
+  const jsonLd = buildJsonLd(topic);
+
   return (
     <div className="mx-auto max-w-5xl px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Breadcrumb */}
       <nav className="mb-4 text-sm text-gray-500">
         <Link href="/" className="text-[#0645ad] hover:underline">
