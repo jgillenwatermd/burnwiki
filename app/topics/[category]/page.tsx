@@ -70,7 +70,7 @@ export default async function CategoryPage({ params }: Props) {
         ))}
         {topics.length === 0 && (
           <p className="py-8 text-center text-gray-400">
-            Topics for this category are in development.
+            Topics for this category are in editorial review.
           </p>
         )}
       </div>

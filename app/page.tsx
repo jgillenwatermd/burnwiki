@@ -6,6 +6,10 @@ export const revalidate = 3600;
 
 export default async function HomePage() {
   const categories = await getAllCategories();
+  const publishedCount = categories.reduce(
+    (sum, c) => sum + (c.topic_count || 0),
+    0
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12">
@@ -19,26 +23,17 @@ export default async function HomePage() {
           <SearchBar />
         </div>
         <p className="mt-4 text-sm text-gray-400">
-          Evidence-indexed reference covering burn physiology, resuscitation,
-          critical care, wound management, and more.
+          Currently {publishedCount} topic{publishedCount === 1 ? "" : "s"} live.
+          New topics published as they clear full evidence review.
         </p>
       </div>
 
       {/* Category grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {categories
-          .filter((c) => (c.topic_count || 0) > 0)
-          .map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
+        {categories.map((category) => (
+          <CategoryCard key={category.id} category={category} />
+        ))}
       </div>
-
-      {/* Empty categories note */}
-      {categories.some((c) => (c.topic_count || 0) === 0) && (
-        <p className="mt-8 text-center text-sm text-gray-400">
-          Additional categories are in development.
-        </p>
-      )}
     </div>
   );
 }

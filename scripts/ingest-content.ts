@@ -33,14 +33,41 @@ interface TopicFrontmatter {
   summary?: string;
   category: string;
   status?: string;
+  publication_status?: string;
   evidence_level?: string;
   target_roles?: string[];
   related_topics?: string[];
   keywords?: string[];
   aliases?: string[];
-  sources?: number[];
+  sources?: unknown; // legacy int[] OR new EFP {pmid, published}[]
   last_updated?: string | Date;
   [key: string]: unknown; // Allow extra fields
+}
+
+// EFP v2.1+ pages emit `sources` as [{pmid: "12345", published: 2024}, ...].
+// Older legacy pages emit `sources` as [12345, 67890, ...] (int[]).
+// Supabase column is int[]; coerce both shapes to int[] of PMIDs.
+function normalizeSources(raw: unknown): number[] {
+  if (!Array.isArray(raw)) return [];
+  const out: number[] = [];
+  for (const item of raw) {
+    let pmid: number | null = null;
+    if (typeof item === "number") {
+      pmid = item;
+    } else if (typeof item === "string") {
+      const parsed = parseInt(item, 10);
+      pmid = Number.isFinite(parsed) ? parsed : null;
+    } else if (item && typeof item === "object" && "pmid" in item) {
+      const v = (item as { pmid: unknown }).pmid;
+      if (typeof v === "number") pmid = v;
+      else if (typeof v === "string") {
+        const parsed = parseInt(v, 10);
+        pmid = Number.isFinite(parsed) ? parsed : null;
+      }
+    }
+    if (pmid !== null && Number.isFinite(pmid)) out.push(pmid);
+  }
+  return out;
 }
 
 interface CategoryInfo {
@@ -151,8 +178,17 @@ function parseTopics(): {
         const { data, content } = matter(raw);
         const fm = data as TopicFrontmatter;
 
+        // Publication boundary: only ingest pages EIC has signed off as published.
+        // Per wiki/.claude/CLAUDE.md DD-56/Fix-4: passing G-8 produces internal
+        // canon at wiki/topics/...; EIC sets publication_status: published in
+        // frontmatter to promote to burnwiki.com. Skip non-published silently —
+        // skeleton/draft files are expected and not an error.
+        if (fm.publication_status !== "published") {
+          continue;
+        }
+
         if (!fm.canonical_id || !fm.title) {
-          errors.push(`${filePath}: missing canonical_id or title, skipping`);
+          errors.push(`${filePath}: published page missing canonical_id or title, skipping`);
           continue;
         }
 
@@ -167,7 +203,7 @@ function parseTopics(): {
           related_topics: fm.related_topics || [],
           keywords: fm.keywords || [],
           aliases: fm.aliases || [],
-          sources: fm.sources || [],
+          sources: normalizeSources(fm.sources),
           last_updated: fm.last_updated
             ? fm.last_updated instanceof Date
               ? fm.last_updated.toISOString().split("T")[0]
