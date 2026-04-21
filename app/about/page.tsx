@@ -32,9 +32,11 @@ export default function AboutPage() {
 
         <h2>How does it work?</h2>
         <p>
-          Every topic is written by burn-care domain experts. Every clinical
-          claim is linked to its source literature via PubMed. Inline citations
-          connect directly to the referenced studies.
+          Every topic passes through a multi-gate evidence-anchoring pipeline
+          before publication: LLM drafting, expert review, and editor-in-chief
+          sign-off. Every clinical claim is linked to its source literature via
+          PubMed. Inline citations connect directly to the referenced studies.
+          See <em>How Burn Wiki is built</em> below for the full process.
         </p>
 
         <h2>Evidence standards</h2>

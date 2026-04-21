@@ -34,16 +34,13 @@ export default async function HomePage() {
           The first illustrated evidence-anchored burn-care reference
         </div>
         <h1 className="mt-3 max-w-3xl font-serif text-5xl font-medium leading-[1.03] tracking-[-0.025em] text-codex-ink">
-          Evidence-anchored burn care,
-          <br />
-          <span className="italic text-codex-ink2">
-            written by the people doing it.
-          </span>
+          Evidence-anchored burn care.
         </h1>
         <p className="mt-5 max-w-2xl font-serif text-lg leading-relaxed text-codex-ink2">
           {publishedCount} topic{publishedCount === 1 ? "" : "s"} published.
-          New topics released as they clear full evidence review. Every claim
-          PMID-linked; every page physician-supervised.
+          Topics are LLM-drafted and gated by expert review before publication.
+          Every claim is PMID-linked. New topics released as they clear the
+          pipeline.
         </p>
 
         {/* Evidence legend — teaches the palette inline */}
