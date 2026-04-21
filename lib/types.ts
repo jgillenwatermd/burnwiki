@@ -8,6 +8,8 @@ export interface Topic {
   evidence_level: string | null;
   target_roles: string[];
   related_topics: string[];
+  parent_topic: string | null;
+  subtopics: string[];
   keywords: string[];
   aliases: string[];
   sources: number[];

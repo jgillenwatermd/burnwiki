@@ -10,6 +10,14 @@ export default async function HomePage() {
     (sum, c) => sum + (c.topic_count || 0),
     0
   );
+  // Populated categories first so live content is visible above the fold;
+  // empty placeholders follow in their original sort_order.
+  const sortedCategories = [...categories].sort((a, b) => {
+    const aEmpty = (a.topic_count || 0) === 0 ? 1 : 0;
+    const bEmpty = (b.topic_count || 0) === 0 ? 1 : 0;
+    if (aEmpty !== bEmpty) return aEmpty - bEmpty;
+    return (a.sort_order ?? 999) - (b.sort_order ?? 999);
+  });
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12">
@@ -30,7 +38,7 @@ export default async function HomePage() {
 
       {/* Category grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
+        {sortedCategories.map((category) => (
           <CategoryCard key={category.id} category={category} />
         ))}
       </div>

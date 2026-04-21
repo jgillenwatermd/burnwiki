@@ -37,6 +37,8 @@ interface TopicFrontmatter {
   evidence_level?: string;
   target_roles?: string[];
   related_topics?: string[];
+  parent_topic?: string | null;
+  subtopics?: string[];
   keywords?: string[];
   aliases?: string[];
   sources?: unknown; // legacy int[] OR new EFP {pmid, published}[]
@@ -150,6 +152,8 @@ function parseTopics(): {
     evidence_level: string | null;
     target_roles: string[];
     related_topics: string[];
+    parent_topic: string | null;
+    subtopics: string[];
     keywords: string[];
     aliases: string[];
     sources: number[];
@@ -201,6 +205,8 @@ function parseTopics(): {
           evidence_level: fm.evidence_level || null,
           target_roles: fm.target_roles || [],
           related_topics: fm.related_topics || [],
+          parent_topic: fm.parent_topic || null,
+          subtopics: fm.subtopics || [],
           keywords: fm.keywords || [],
           aliases: fm.aliases || [],
           sources: normalizeSources(fm.sources),
@@ -292,6 +298,8 @@ async function main() {
         evidence_level: topic.evidence_level,
         target_roles: topic.target_roles,
         related_topics: topic.related_topics,
+        parent_topic: topic.parent_topic,
+        subtopics: topic.subtopics,
         keywords: topic.keywords,
         aliases: topic.aliases,
         sources: topic.sources,
