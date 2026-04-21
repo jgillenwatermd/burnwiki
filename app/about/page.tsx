@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "About Burn Wiki — a clinical encyclopedia for the burn care community.",
+  description:
+    "About Burn Wiki — an open-access, evidence-anchored clinical reference for burn care.",
 };
 
 export default function AboutPage() {
@@ -17,62 +18,63 @@ export default function AboutPage() {
 
       <div className="topic-content mt-8">
         <p>
-          Burn Wiki is a public, evidence-indexed clinical encyclopedia dedicated to
-          burn care. It is the only open-access reference of its kind for the burn
-          care community.
+          Burn Wiki is an open-access clinical reference for burn care. Each
+          clinical claim on each page links to its primary PubMed-indexed
+          source. Each page clears a multi-gate evidence-anchoring pipeline
+          before publication. Three topics are currently live.
         </p>
 
-        <h2>Who is this for?</h2>
+        <h2>Audience</h2>
         <p>
-          Burn surgeons, surgical critical care, advanced practice providers,
-          nurses, rehabilitation therapists, pharmacists, social workers,
-          psychologists, respiratory therapists, trainees, and researchers.
-          Anyone involved in the care of burn-injured patients.
+          Primary: burn and critical-care physicians, surgical trainees, and
+          advanced practice providers. Content also serves nursing,
+          rehabilitation, pharmacy, social work, and research readers. Open
+          access; no account required.
         </p>
 
-        <h2>How does it work?</h2>
+        <h2>How content is built</h2>
         <p>
-          Every topic passes through a multi-gate evidence-anchoring pipeline
-          before publication: LLM drafting, expert review, and editor-in-chief
-          sign-off. Every clinical claim is linked to its source literature via
-          PubMed. Inline citations connect directly to the referenced studies.
-          See <em>How Burn Wiki is built</em> below for the full process.
+          A large language model drafts each topic from a corpus of primary
+          sources. Each page then passes through a multi-gate review pipeline:
+          literature search, claim extraction, citation verification, internal
+          review, external clinician review, and editor-in-chief sign-off.
+          Pages go live only after every gate passes.
+        </p>
+        <p>
+          Each clinical claim on a Burn Wiki page is locked to its specific
+          PubMed-indexed source rather than to a page-level bibliography. This
+          makes claims individually re-reviewable as literature evolves,
+          reusable across topics that cite the same primary work, and
+          separately signed off by reviewers.
         </p>
 
         <h2>Evidence standards</h2>
         <p>
-          Each topic carries an evidence level badge reflecting the strength of
-          the underlying literature. This is not a grading of the writing quality
-          but of the evidence base available for that clinical domain. Topics
-          built primarily on randomized trials and systematic reviews are marked
-          as high evidence; topics relying on expert consensus are marked
-          accordingly.
+          Each topic carries an evidence-level badge (High, Moderate,
+          Low&ndash;Moderate, Low, Expert Consensus) reflecting the strength of
+          the underlying literature. Every cited source is a PubMed-indexed
+          primary work. Textbook chapters are read for bibliography only
+          &mdash; their cited PMIDs enter the corpus, but their body text never
+          appears on a Burn Wiki page as authority for a claim.
         </p>
 
-        <h2>How Burn Wiki is built</h2>
+        <h2>Editorial independence</h2>
         <p>
-          Burn Wiki pages are drafted by a large language model (LLM) under
-          supervision of a physician editor-in-chief and burn-care domain
-          experts. Every page passes a multi-gate evidence-anchoring pipeline
-          before publication: literature search, claim extraction, citation
-          verification, internal and external adversarial review, and
-          editor-in-chief sign-off. Every clinical claim on a published page
-          links to its source in PubMed. The LLM does not publish directly — no
-          page reaches this site without human expert approval.
+          Burn Wiki has no commercial sponsors, no advertising, and no industry
+          funding. Editorial decisions are driven by clinical relevance and
+          evidence availability.
         </p>
 
-        <h2>Content and editorial independence</h2>
+        <h2>Editorial team</h2>
         <p>
-          Burn Wiki has no commercial sponsors. Content decisions are driven by
-          clinical relevance, not advertising. The encyclopedia is a living
-          resource: topics are added and updated continuously as new evidence
-          emerges.
+          <strong>Editor in Chief</strong>
+          <br />
+          Justin Gillenwater, MD, MS, FACS, FABA
         </p>
 
-        <h2>Contact</h2>
+        <h2>Corrections and feedback</h2>
         <p>
-          For questions, corrections, or collaboration inquiries, please reach out
-          to the editorial team.
+          <a href="mailto:editorial@burnwiki.com">editorial@burnwiki.com</a>
         </p>
       </div>
     </div>

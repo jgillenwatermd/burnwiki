@@ -70,7 +70,7 @@ export default async function CategoryPage({ params }: Props) {
 
       {topLevel.length === 0 && (
         <p className="mt-16 text-center font-mono text-xs uppercase tracking-wider text-codex-muted">
-          Topics for this category are in editorial review.
+          No topics in this category yet.
         </p>
       )}
 

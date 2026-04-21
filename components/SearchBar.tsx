@@ -74,7 +74,7 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => results.length > 0 && setIsOpen(true)}
-            placeholder={compact ? "Search topics, figures\u2026" : "Search topics, figures, or PMIDs\u2026"}
+            placeholder={"Search topics\u2026"}
             className={`min-w-0 flex-1 bg-transparent font-serif italic text-codex-ink placeholder:text-codex-muted focus:outline-none ${
               compact ? "text-xs" : "text-base"
             }`}

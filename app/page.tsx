@@ -1,17 +1,8 @@
+import Link from "next/link";
 import { getAllCategories } from "@/lib/content";
 import CategoryCard from "@/components/CategoryCard";
-import EvBadge from "@/components/EvBadge";
-import type { EvidenceLevel } from "@/lib/evidence";
 
 export const revalidate = 3600;
-
-const EVIDENCE_LEGEND: EvidenceLevel[] = [
-  "High",
-  "Moderate",
-  "Low–Moderate",
-  "Low",
-  "Expert Consensus",
-];
 
 export default async function HomePage() {
   const categories = await getAllCategories();
@@ -27,36 +18,26 @@ export default async function HomePage() {
   });
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-12">
-      {/* Hero */}
-      <div className="mb-10">
-        <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-codex-muted">
-          The first illustrated evidence-anchored burn-care reference
-        </div>
-        <h1 className="mt-3 max-w-3xl font-serif text-5xl font-medium leading-[1.03] tracking-[-0.025em] text-codex-ink">
-          Evidence-anchored burn care.
-        </h1>
-        <p className="mt-5 max-w-2xl font-serif text-lg leading-relaxed text-codex-ink2">
-          {publishedCount} topic{publishedCount === 1 ? "" : "s"} published.
-          Topics are LLM-drafted and gated by expert review before publication.
-          Every claim is PMID-linked. New topics released as they clear the
-          pipeline.
-        </p>
+    <div className="mx-auto max-w-5xl px-6 py-10">
+      <h1 className="sr-only">Burn Wiki</h1>
+      <p className="mb-10 max-w-2xl font-serif text-lg leading-relaxed text-codex-ink2">
+        Burn Wiki is an open-access clinical reference for burn care.{" "}
+        {publishedCount === 0
+          ? "No topics are currently published."
+          : `${publishedCount} topic${publishedCount === 1 ? "" : "s"} ${
+              publishedCount === 1 ? "is" : "are"
+            } currently published.`}{" "}
+        See{" "}
+        <Link
+          href="/about"
+          className="text-codex-accent underline decoration-codex-rule underline-offset-2 hover:decoration-codex-accent"
+        >
+          About
+        </Link>{" "}
+        for how content is built.
+      </p>
 
-        {/* Evidence legend — teaches the palette inline */}
-        <div className="mt-8 flex flex-wrap items-center gap-4 border-t border-codex-rule pt-5 font-mono text-[10px] tracking-wider text-codex-muted">
-          <span className="uppercase">Evidence</span>
-          {EVIDENCE_LEGEND.map((L) => (
-            <span key={L} className="inline-flex items-center gap-1.5">
-              <EvBadge level={L} mode="dot" />
-              <span className="uppercase text-codex-ink3">{L}</span>
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Category grid — editorial numbered */}
-      <div className="grid grid-cols-[1px] gap-px bg-codex-rule sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 gap-px bg-codex-rule lg:grid-cols-3">
         {sortedCategories.map((category, i) => (
           <CategoryCard key={category.id} category={category} index={i} />
         ))}

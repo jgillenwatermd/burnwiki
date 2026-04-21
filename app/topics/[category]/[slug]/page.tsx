@@ -198,12 +198,18 @@ export default async function TopicPage({ params }: Props) {
           <div className="mt-4 flex flex-wrap items-center gap-3 border-b border-codex-rule pb-4">
             {topic.evidence_level && <EvBadge level={topic.evidence_level} />}
             {topic.evidence_level && (
-              <EvBadge level={topic.evidence_level} mode="bar" />
+              <span className="hidden sm:inline-flex">
+                <EvBadge level={topic.evidence_level} mode="bar" />
+              </span>
             )}
             <span className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
               {refCount > 0 && `${refCount} ref${refCount === 1 ? "" : "s"} · `}
               {readMin} min read
-              {topic.last_updated && ` · rev ${topic.last_updated}`}
+              {topic.last_updated && (
+                <span className="hidden sm:inline">
+                  {` · rev ${topic.last_updated}`}
+                </span>
+              )}
             </span>
           </div>
 

@@ -15,9 +15,6 @@ export default function Header() {
           <span className="font-serif text-lg font-semibold tracking-tight text-codex-ink">
             Burn<span className="text-codex-accent">·</span>Wiki
           </span>
-          <span className="hidden font-mono text-[9px] uppercase tracking-[0.18em] text-codex-muted md:inline">
-            Vol. I · 2026
-          </span>
         </Link>
 
         <div className="flex-1" />

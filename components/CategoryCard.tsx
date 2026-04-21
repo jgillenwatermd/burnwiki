@@ -28,7 +28,7 @@ export default function CategoryCard({ category, index }: Props) {
             </span>
           )}
           <span className="font-mono text-[10px] text-codex-muted">
-            {isEmpty ? "in review" : `${count} ${count === 1 ? "topic" : "topics"}`}
+            {isEmpty ? "0 published" : `${count} ${count === 1 ? "topic" : "topics"}`}
           </span>
         </div>
         <h3
