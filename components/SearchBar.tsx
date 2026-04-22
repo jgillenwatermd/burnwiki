@@ -36,10 +36,26 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
 
     debounceRef.current = setTimeout(async () => {
       setLoading(true);
-      const { results: data } = await searchTopics(query);
+      const settled = query.trim();
+      const { results: data } = await searchTopics(settled);
       setResults(data);
       setIsOpen(data.length > 0);
       setLoading(false);
+      if (settled.length >= 2 && settled.length <= 200) {
+        fetch("/api/search/log", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            query: settled,
+            result_count: data.length,
+            referrer:
+              typeof document !== "undefined"
+                ? document.referrer || undefined
+                : undefined,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+      }
     }, 300);
 
     return () => {

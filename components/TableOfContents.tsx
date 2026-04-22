@@ -9,7 +9,7 @@ interface Heading {
 }
 
 export default function TableOfContents({ headings }: { headings: Heading[] }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   if (headings.length === 0) return null;
 
