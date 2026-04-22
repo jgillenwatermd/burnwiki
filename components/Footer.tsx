@@ -11,12 +11,17 @@ export default function Footer() {
           >
             Burn<span className="text-codex-accent">·</span>Wiki
           </Link>
-          <Link
-            href="/about"
-            className="font-mono text-xs uppercase tracking-wide hover:text-codex-ink"
-          >
-            About
-          </Link>
+          <div className="flex items-center gap-5 font-mono text-xs uppercase tracking-wide">
+            <Link href="/about" className="hover:text-codex-ink">
+              About
+            </Link>
+            <a
+              href="mailto:editorial@burnwiki.com"
+              className="hover:text-codex-ink"
+            >
+              Contact
+            </a>
+          </div>
         </div>
         <div className="mt-3 border-t border-codex-rule-light pt-3 text-center font-mono text-[10px] uppercase tracking-wider text-codex-muted">
           LLM-drafted, physician-reviewed.{" "}

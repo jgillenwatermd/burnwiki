@@ -39,7 +39,7 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
       const settled = query.trim();
       const { results: data } = await searchTopics(settled);
       setResults(data);
-      setIsOpen(data.length > 0);
+      setIsOpen(settled.length >= 2);
       setLoading(false);
       if (settled.length >= 2 && settled.length <= 200) {
         fetch("/api/search/log", {
@@ -106,6 +106,26 @@ export default function SearchBar({ compact = false }: { compact?: boolean }) {
           {loading ? (
             <div className="px-4 py-3 font-mono text-xs text-codex-muted">
               {"Searching\u2026"}
+            </div>
+          ) : results.length === 0 ? (
+            <div className="px-4 py-4">
+              <div className="font-serif text-sm text-codex-ink2">
+                {`No topics match "${query.trim()}" yet.`}
+              </div>
+              <div className="mt-1.5 font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+                The encyclopedia is growing. {" "}
+                <a
+                  href={`mailto:editorial@burnwiki.com?subject=Topic%20request%3A%20${encodeURIComponent(
+                    query.trim()
+                  )}&body=${encodeURIComponent(
+                    `I searched Burn Wiki for "${query.trim()}" and did not find coverage. Would this be a useful topic to add?`
+                  )}`}
+                  className="text-codex-accent hover:underline"
+                >
+                  Request this topic
+                </a>
+                .
+              </div>
             </div>
           ) : (
             <>

@@ -70,6 +70,43 @@ export const metadata: Metadata = {
   },
 };
 
+const siteJsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": `${SITE_URL}#website`,
+      url: SITE_URL,
+      name: "Burn Wiki",
+      description: SITE_DESCRIPTION,
+      inLanguage: "en-US",
+      potentialAction: {
+        "@type": "SearchAction",
+        target: {
+          "@type": "EntryPoint",
+          urlTemplate: `${SITE_URL}/search?q={search_term_string}`,
+        },
+        "query-input": "required name=search_term_string",
+      },
+      publisher: { "@id": `${SITE_URL}#organization` },
+    },
+    {
+      "@type": "Organization",
+      "@id": `${SITE_URL}#organization`,
+      name: "Burn Wiki",
+      url: SITE_URL,
+      logo: `${SITE_URL}/opengraph-image`,
+      email: "editorial@burnwiki.com",
+      founder: {
+        "@type": "Person",
+        name: "Justin Gillenwater",
+        honorificSuffix: "MD, MS, FACS, FABA",
+        jobTitle: "Editor in Chief",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -81,6 +118,10 @@ export default function RootLayout({
       className={`${sourceSerif.variable} ${inter.variable} ${jetbrainsMono.variable}`}
     >
       <body className="flex min-h-screen flex-col bg-codex-bg font-sans text-codex-ink antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd) }}
+        />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
