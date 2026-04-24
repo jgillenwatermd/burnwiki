@@ -2,10 +2,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getTopic, getAllTopicSlugs, getRelatedTopics, getCategory } from "@/lib/content";
 import { renderMarkdown, extractHeadings } from "@/lib/markdown";
+import { extractHoistedSection } from "@/lib/extract-hoisted";
 import TableOfContents from "@/components/TableOfContents";
 import EvBadge from "@/components/EvBadge";
 import RelatedTopics from "@/components/RelatedTopics";
 import KeyPointsCallout from "@/components/KeyPointsCallout";
+import SummaryCard from "@/components/SummaryCard";
 import type { Metadata } from "next";
 import type { Topic } from "@/lib/types";
 
@@ -127,22 +129,15 @@ export default async function TopicPage({ params }: Props) {
   const relatedTopics = await getRelatedTopics(topic.related_topics || []);
   const headings = extractHeadings(topic.body_markdown);
 
-  const keyPointsMatch = topic.body_markdown.match(
-    /## Key Points\s*\n([\s\S]*?)(?=\n## |\n*$)/
-  );
-  const keyPointsMarkdown = keyPointsMatch ? keyPointsMatch[1] : null;
+  const summary = extractHoistedSection(topic.body_markdown, "Summary");
+  const keyPoints = extractHoistedSection(summary.remainder, "Key Points");
 
-  let mainMarkdown = topic.body_markdown;
-  if (keyPointsMatch) {
-    mainMarkdown = mainMarkdown.replace(
-      /## Key Points\s*\n[\s\S]*?(?=\n## |\n*$)/,
-      ""
-    );
-  }
-
-  const bodyHtml = await renderMarkdown(mainMarkdown);
-  const keyPointsHtml = keyPointsMarkdown
-    ? await renderMarkdown(keyPointsMarkdown)
+  const bodyHtml = await renderMarkdown(keyPoints.remainder);
+  const summaryHtml = summary.markdown
+    ? await renderMarkdown(summary.markdown)
+    : null;
+  const keyPointsHtml = keyPoints.markdown
+    ? await renderMarkdown(keyPoints.markdown)
     : null;
 
   const htmlWithIds = bodyHtml.replace(
@@ -162,13 +157,13 @@ export default async function TopicPage({ params }: Props) {
   const readMin = estimateReadTime(topic.body_markdown);
 
   return (
-    <div className="mx-auto max-w-6xl px-6 py-8">
+    <div className="topic-page mx-auto max-w-6xl px-6 py-8">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       {/* Breadcrumb */}
-      <nav className="font-mono text-[10px] uppercase tracking-wider text-codex-muted">
+      <nav className="topic-breadcrumb font-mono text-[10px] uppercase tracking-wider text-codex-muted">
         <Link href="/" className="hover:text-codex-ink">
           Index
         </Link>
@@ -184,18 +179,18 @@ export default async function TopicPage({ params }: Props) {
       </nav>
 
       {/* Three-column layout: left TOC · center article · right see-also */}
-      <div className="mt-6 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)_240px]">
+      <div className="topic-grid mt-6 grid gap-10 lg:grid-cols-[180px_minmax(0,1fr)_240px]">
         {/* LEFT — TOC */}
-        <div className="order-2 lg:order-1">
+        <div className="topic-toc-col order-2 lg:order-1">
           <TableOfContents headings={headings} />
         </div>
 
         {/* CENTER — article */}
-        <article className="order-1 min-w-0 lg:order-2">
-          <h1 className="font-serif text-4xl font-medium leading-[1.04] tracking-[-0.02em] text-codex-ink sm:text-[44px]">
+        <article className="topic-article order-1 min-w-0 lg:order-2">
+          <h1 className="topic-title font-serif text-4xl font-medium leading-[1.04] tracking-[-0.02em] text-codex-ink sm:text-[44px]">
             {topic.title}
           </h1>
-          <div className="mt-4 flex flex-wrap items-center gap-3 border-b border-codex-rule pb-4">
+          <div className="topic-meta mt-4 flex flex-wrap items-center gap-3 border-b border-codex-rule pb-4">
             {topic.evidence_level && <EvBadge level={topic.evidence_level} />}
             {topic.evidence_level && (
               <span className="hidden sm:inline-flex">
@@ -213,16 +208,22 @@ export default async function TopicPage({ params }: Props) {
             </span>
           </div>
 
+          {summaryHtml && <SummaryCard html={summaryHtml} />}
+
           {keyPointsHtml && <KeyPointsCallout html={keyPointsHtml} />}
 
           <div
             className="topic-content mt-6"
             dangerouslySetInnerHTML={{ __html: htmlWithIds }}
           />
+
+          <p className="print-footer hidden">
+            burnwiki.com · {topic.title} · {`https://burnwiki.com/topics/${topic.category}/${topic.canonical_id}`}
+          </p>
         </article>
 
         {/* RIGHT — see also */}
-        <aside className="order-3 lg:order-3">
+        <aside className="topic-aside-col order-3 lg:order-3">
           <div className="lg:sticky lg:top-6">
             <RelatedTopics topics={relatedTopics} />
           </div>

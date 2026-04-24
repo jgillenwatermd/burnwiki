@@ -181,3 +181,150 @@
   letter-spacing: 0.05em;
   vertical-align: middle;
 }
+
+/* Print stylesheet — clean PDF export of topic pages (Scenario D in the design brief).
+   Hides site chrome (header, footer, breadcrumb, TOC, related) and prints a readable
+   Summary + Key Points + prose + References document with attribution footer. */
+@media print {
+  @page {
+    margin: 18mm 16mm 20mm 18mm;
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  body {
+    font-family: var(--font-serif), "Iowan Old Style", Georgia, serif;
+    font-size: 11pt;
+  }
+
+  header,
+  footer,
+  .topic-breadcrumb,
+  .topic-toc-col,
+  .topic-aside-col {
+    display: none !important;
+  }
+
+  .topic-page {
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .topic-grid {
+    display: block !important;
+    grid-template-columns: none !important;
+    gap: 0 !important;
+    margin-top: 0 !important;
+  }
+
+  .topic-article {
+    max-width: none !important;
+  }
+
+  .topic-title {
+    font-size: 22pt !important;
+    line-height: 1.15 !important;
+    margin: 0 0 6pt !important;
+  }
+
+  .topic-meta {
+    border-bottom: 0.5pt solid #888 !important;
+    padding-bottom: 4pt !important;
+    margin-bottom: 14pt !important;
+    color: #333 !important;
+    font-size: 9pt;
+  }
+
+  /* Summary + Key Points callouts: keep boxed, monochrome, no page-break inside */
+  .summary-card,
+  [class*="border-codex-rule"][class*="bg-codex-paper"] {
+    background: #fff !important;
+    border: 0.75pt solid #000 !important;
+    border-left: 3pt solid #000 !important;
+    padding: 10pt 12pt !important;
+    margin: 10pt 0 14pt !important;
+    page-break-inside: avoid;
+  }
+
+  /* KeyPointsCallout's outer wrapper has bg-codex-paper; the summary-card rule
+     above catches it. Both also carry border classes that reset to monochrome. */
+
+  .topic-content {
+    color: #000 !important;
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+  }
+
+  .topic-content h2 {
+    font-size: 14pt !important;
+    page-break-after: avoid;
+    margin-top: 16pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .topic-content h3 {
+    font-size: 12pt !important;
+    page-break-after: avoid;
+    margin-top: 10pt !important;
+  }
+
+  .topic-content p,
+  .topic-content li {
+    font-size: 11pt !important;
+    line-height: 1.5 !important;
+    orphans: 3;
+    widows: 3;
+    color: #000 !important;
+  }
+
+  .topic-content table {
+    page-break-inside: avoid;
+    border: 0.75pt solid #000 !important;
+  }
+
+  .topic-content th,
+  .topic-content td {
+    border: 0.5pt solid #000 !important;
+  }
+
+  .topic-content a,
+  .topic-content .citation-link,
+  .topic-content .pmid-link {
+    color: #000 !important;
+    text-decoration: none !important;
+  }
+
+  /* Drop ornamental rules + ticks that serve only the screen layout */
+  .summary-card [aria-hidden="true"] {
+    display: none !important;
+  }
+
+  /* References — force onto a new page */
+  .topic-content h2#references,
+  .topic-content section#references,
+  .topic-content #references {
+    page-break-before: always;
+  }
+
+  .reference-item {
+    font-size: 10pt !important;
+    page-break-inside: avoid;
+  }
+
+  /* Attribution footer — rendered only in print */
+  .print-footer {
+    display: block !important;
+    margin-top: 18pt;
+    padding-top: 4pt;
+    border-top: 0.5pt solid #888;
+    font-family: var(--font-mono), ui-monospace, Menlo, monospace;
+    font-size: 8pt;
+    color: #555 !important;
+    page-break-inside: avoid;
+  }
+}
